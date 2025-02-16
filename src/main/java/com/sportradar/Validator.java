@@ -38,7 +38,9 @@ public class Validator {
      * @param awayScore away team score
      */
     public void validateScores(int homeScore, int awayScore) {
-        //add validation of scores
+        if (homeScore < 0 || awayScore < 0) {
+            throw new IllegalArgumentException("Scores cannot be negative");
+        }
     }
 
     /**
@@ -49,11 +51,18 @@ public class Validator {
      * @param awayTeam away team name
      */
     public void validateMatchExists(List<Match> matches, String homeTeam, String awayTeam) {
-        //add validation if match exists
+        if (isMatchNotFound(matches, homeTeam, awayTeam)) {
+            throw new IllegalArgumentException("Match not found");
+        }
     }
 
     private boolean isMatchStarted(List<Match> matches, String homeTeam, String awayTeam) {
         return matches.stream()
                 .anyMatch(match -> match.homeTeam().equals(homeTeam) && match.awayTeam().equals(awayTeam));
+    }
+
+    private boolean isMatchNotFound(List<Match> matches, String homeTeam, String awayTeam) {
+        return matches.stream()
+                .noneMatch(m -> m.isMatch(homeTeam, awayTeam));
     }
 }

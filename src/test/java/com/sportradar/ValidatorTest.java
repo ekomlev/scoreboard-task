@@ -51,4 +51,30 @@ class ValidatorTest {
     void validateMatchNotStarted_ShouldNotThrowException_WhenMatchNotStarted() {
         assertDoesNotThrow(() -> validator.validateMatchNotStarted(matches, "Mexico", "Canada"));
     }
+
+    @Test
+    void validateScores_ShouldNotThrowException_WhenScoresAreValid() {
+        assertDoesNotThrow(() -> validator.validateScores(1, 2));
+    }
+
+    @Test
+    void validateScores_ShouldThrowException_WhenHomeScoreIsNegative() {
+        assertThrows(IllegalArgumentException.class, () -> validator.validateScores(-1, 2));
+    }
+
+    @Test
+    void validateScores_ShouldThrowException_WhenAwayScoreIsNegative() {
+        assertThrows(IllegalArgumentException.class, () -> validator.validateScores(1, -2));
+    }
+
+    @Test
+    void validateMatchExists_ShouldNotThrowException_WhenMatchExists() {
+        matches.add(new Match("Mexico", "Canada", 0, 0, null));
+        assertDoesNotThrow(() -> validator.validateMatchExists(matches, "Mexico", "Canada"));
+    }
+
+    @Test
+    void validateMatchExists_ShouldThrowException_WhenMatchDoesNotExist() {
+        assertThrows(IllegalArgumentException.class, () -> validator.validateMatchExists(matches, "Mexico", "Canada"));
+    }
 }
