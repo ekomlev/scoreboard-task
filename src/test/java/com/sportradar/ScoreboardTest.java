@@ -106,4 +106,27 @@ class ScoreboardTest {
         // When & Then
         assertThrows(IllegalArgumentException.class, () -> scoreboard.updateScore("Mexico", "Canada", -1, 2));
     }
+
+    @Test
+    void finishMatch_ShouldNotThrowException_WhenMatchExists() {
+        // Given
+        doNothing().when(validator).validateMatchExists(matches, "Mexico", "Canada");
+        Match match = new Match("Mexico", "Canada", 0, 0, clock.instant());
+        matches.add(match);
+
+        // When
+        scoreboard.finishMatch("Mexico", "Canada");
+
+        // Then
+        assertEquals(0, matches.size());
+    }
+
+    @Test
+    void finishMatch_ShouldThrowException_WhenMatchDoesNotExist() {
+        // Given
+        doThrow(new IllegalArgumentException("Match not found")).when(validator).validateMatchExists(matches, "Mexico", "Canada");
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class, () -> scoreboard.finishMatch("Mexico", "Canada"));
+    }
 }

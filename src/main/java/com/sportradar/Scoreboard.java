@@ -53,6 +53,17 @@ public class Scoreboard {
         matches.add(updatedMatch);
     }
 
+    /**
+     * Finishes a match between two teams
+     *
+     * @param homeTeam the name of the home team
+     * @param awayTeam the name of the away team
+     */
+    public void finishMatch(String homeTeam, String awayTeam) {
+        validator.validateMatchExists(matches, homeTeam, awayTeam);
+        matches.remove(findMatch(homeTeam, awayTeam));
+    }
+
     private Match findMatch(String homeTeam, String awayTeam) {
         return matches.stream()
                 .filter(m -> m.isMatch(homeTeam, awayTeam))
