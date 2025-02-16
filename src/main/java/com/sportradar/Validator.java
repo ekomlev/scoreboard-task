@@ -14,7 +14,9 @@ public class Validator {
      * @param awayTeam away team name
      */
     protected void validateMatchNotStarted(List<Match> matches, String homeTeam, String awayTeam) {
-        //add validation to check if the match has not started yet
+        if (isMatchStarted(matches, homeTeam, awayTeam)) {
+            throw new IllegalArgumentException("Match has already started");
+        }
     }
 
     /**
@@ -24,6 +26,13 @@ public class Validator {
      * @param awayTeam away team name
      */
     protected void validateTeams(String homeTeam, String awayTeam) {
-        //add validation to check if the team names are valid
+        if (homeTeam == null || awayTeam == null || homeTeam.equals(awayTeam)) {
+            throw new IllegalArgumentException("Invalid team names");
+        }
+    }
+
+    private boolean isMatchStarted(List<Match> matches, String homeTeam, String awayTeam) {
+        return matches.stream()
+                .anyMatch(match -> match.homeTeam().equals(homeTeam) && match.awayTeam().equals(awayTeam));
     }
 }
