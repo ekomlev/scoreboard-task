@@ -129,4 +129,56 @@ class ScoreboardTest {
         // When & Then
         assertThrows(IllegalArgumentException.class, () -> scoreboard.finishMatch("Mexico", "Canada"));
     }
+
+    @Test
+    void getSummary_ShouldReturnMatch() {
+        // Given
+        Match match = new Match("Mexico", "Canada", 2, 3, clock.instant());
+        matches.add(match);
+
+        // When
+        List<String> summary = scoreboard.getSummary();
+
+        // Then
+        assertEquals(1, summary.size());
+        assertEquals("Mexico 2 - Canada 3", summary.get(0));
+    }
+
+    @Test
+    void getSummary_ShouldReturnMatchesSortedByTotalScore() {
+        // Given
+        Match match1 = new Match("Mexico", "Canada", 2, 3, clock.instant());
+        Match match2 = new Match("Spain", "Brazil", 1, 1, clock.instant());
+        matches.add(match1);
+        matches.add(match2);
+        scoreboard = new Scoreboard(clock, validator, matches);
+
+        // When
+        List<String> summary = scoreboard.getSummary();
+
+        // Then
+        assertEquals(2, summary.size());
+        assertEquals("Mexico 2 - Canada 3", summary.get(0));
+        assertEquals("Spain 1 - Brazil 1", summary.get(1));
+    }
+
+    @Test
+    void getSummary_ShouldReturnMatchesSortedByTotalScoreAndStartTime() {
+        // Given
+        String oldestInstant = "2025-02-02T12:00:00Z";
+        Match match1 = new Match("Mexico", "Canada", 2, 1, Instant.parse(oldestInstant));
+        String newestInstant = "2025-02-02T13:00:00Z";
+        Match match2 = new Match("Spain", "Brazil", 2, 1, Instant.parse(newestInstant));
+        matches.add(match1);
+        matches.add(match2);
+        scoreboard = new Scoreboard(clock, validator, matches);
+
+        // When
+        List<String> summary = scoreboard.getSummary();
+
+        // Then
+        assertEquals(2, summary.size());
+        assertEquals("Spain 2 - Brazil 1", summary.get(0));
+        assertEquals("Mexico 2 - Canada 1", summary.get(1));
+    }
 }

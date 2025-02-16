@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.Clock;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -62,6 +63,19 @@ public class Scoreboard {
     public void finishMatch(String homeTeam, String awayTeam) {
         validator.validateMatchExists(matches, homeTeam, awayTeam);
         matches.remove(findMatch(homeTeam, awayTeam));
+    }
+
+    /**
+     * Returns the summary of all matches
+     *
+     * @return the summary of all matches
+     */
+    public List<String> getSummary() {
+        return matches.stream()
+                .sorted(Comparator.comparingInt(Match::totalScore).reversed()
+                        .thenComparing(Comparator.comparing(Match::startTime).reversed()))
+                .map(Match::toString)
+                .toList();
     }
 
     private Match findMatch(String homeTeam, String awayTeam) {

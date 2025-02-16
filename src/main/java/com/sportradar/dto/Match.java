@@ -25,4 +25,18 @@ public record Match(String homeTeam, String awayTeam, int homeScore, int awaySco
     public boolean isMatch(String homeTeam, String awayTeam) {
         return this.homeTeam.equals(homeTeam) && this.awayTeam.equals(awayTeam);
     }
+
+    /**
+     * Calculates the total score of the match
+     *
+     * @return the total score of the match
+     */
+    public int totalScore() {
+        return homeScore + awayScore;
+    }
+
+    @Override
+    public String toString() {
+        return homeTeam + " " + homeScore + " - " + awayTeam + " " + awayScore;
+    }
 }
