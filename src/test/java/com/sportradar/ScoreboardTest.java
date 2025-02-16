@@ -10,7 +10,9 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -64,5 +66,44 @@ class ScoreboardTest {
 
         // When
         assertThrows(IllegalArgumentException.class, () -> scoreboard.startMatch("Mexico", "Canada"));
+    }
+
+    @Test
+    void updateScore_ShouldNotThrowException_WhenScoresAndMatchAreValid() {
+        // Given
+        doNothing().when(validator).validateScores(1, 2);
+        doNothing().when(validator).validateMatchExists(matches, "Mexico", "Canada");
+        Match match = new Match("Mexico", "Canada", 0, 0, clock.instant());
+        matches.add(match);
+        scoreboard = new Scoreboard(clock, validator, matches);
+
+        // When
+        scoreboard.updateScore("Mexico", "Canada", 1, 2);
+
+        // Then
+        assertDoesNotThrow(() -> scoreboard.updateScore("Mexico", "Canada", 1, 2));
+        assertEquals(1, matches.size());
+        assertEquals(1, matches.get(0).homeScore());
+        assertEquals(2, matches.get(0).awayScore());
+    }
+
+    @Test
+    void updateScore_ShouldThrowException_WhenMatchDoesNotExist() {
+        // Given
+        doNothing().when(validator).validateScores(1, 2);
+        doThrow(new IllegalArgumentException("Match not found")).when(validator).validateMatchExists(matches, "Mexico", "Canada");
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class, () -> scoreboard.updateScore("Mexico", "Canada", 1, 2));
+    }
+
+    @Test
+    void updateScore_ShouldThrowException_WhenScoresAreInvalid() {
+        // Given
+        doNothing().when(validator).validateMatchExists(matches, "Mexico", "Canada");
+        doThrow(new IllegalArgumentException("Invalid scores")).when(validator).validateScores(-1, 2);
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class, () -> scoreboard.updateScore("Mexico", "Canada", -1, 2));
     }
 }

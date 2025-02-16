@@ -34,4 +34,29 @@ public class Scoreboard {
         Match newMatch = new Match(homeTeam, awayTeam, 0, 0, clock.instant());
         matches.add(newMatch);
     }
+
+    /**
+     * Updates the score of a match
+     *
+     * @param homeTeam  the name of the home team
+     * @param awayTeam  the name of the away team
+     * @param homeScore the new home team score
+     * @param awayScore the new away team score
+     */
+    public void updateScore(String homeTeam, String awayTeam, int homeScore, int awayScore) {
+        validator.validateScores(homeScore, awayScore);
+        validator.validateMatchExists(matches, homeTeam, awayTeam);
+
+        Match match = findMatch(homeTeam, awayTeam);
+        matches.remove(match);
+        Match updatedMatch = match.updateScore(homeScore, awayScore);
+        matches.add(updatedMatch);
+    }
+
+    private Match findMatch(String homeTeam, String awayTeam) {
+        return matches.stream()
+                .filter(m -> m.isMatch(homeTeam, awayTeam))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Match not found"));
+    }
 }

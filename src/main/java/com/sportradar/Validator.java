@@ -31,6 +31,27 @@ public class Validator {
         }
     }
 
+    /**
+     * Validates the scores
+     *
+     * @param homeScore home team score
+     * @param awayScore away team score
+     */
+    public void validateScores(int homeScore, int awayScore) {
+        //add validation of scores
+    }
+
+    /**
+     * Validates if the match exists
+     *
+     * @param matches  list of matches
+     * @param homeTeam home team name
+     * @param awayTeam away team name
+     */
+    public void validateMatchExists(List<Match> matches, String homeTeam, String awayTeam) {
+        //add validation if match exists
+    }
+
     private boolean isMatchStarted(List<Match> matches, String homeTeam, String awayTeam) {
         return matches.stream()
                 .anyMatch(match -> match.homeTeam().equals(homeTeam) && match.awayTeam().equals(awayTeam));
