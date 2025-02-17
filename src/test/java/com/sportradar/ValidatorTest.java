@@ -5,20 +5,20 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ValidatorTest {
     private Validator validator;
-    private List<Match> matches;
+    private SortedSet<Match> matches;
 
     @BeforeEach
     void setUp() {
         validator = new Validator();
-        matches = new ArrayList<>();
+        matches = new TreeSet<>();
     }
 
     @Test
@@ -69,7 +69,7 @@ class ValidatorTest {
 
     @Test
     void validateMatchExists_ShouldNotThrowException_WhenMatchExists() {
-        matches.add(new Match("Mexico", "Canada", 0, 0, null));
+        matches.add(new Match("Mexico", "Canada", 0, 0, Instant.parse("2025-02-02T12:00:00Z")));
         assertDoesNotThrow(() -> validator.validateMatchExists(matches, "Mexico", "Canada"));
     }
 

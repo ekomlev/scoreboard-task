@@ -7,13 +7,14 @@ import org.junit.jupiter.api.Test;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
@@ -23,13 +24,13 @@ class ScoreboardTest {
     private Scoreboard scoreboard;
     private Clock clock;
     private Validator validator;
-    private List<Match> matches;
+    private SortedSet<Match> matches;
 
     @BeforeEach
     void setUp() {
         clock = Clock.fixed(Instant.parse("2025-02-02T12:00:00Z"), ZoneId.of("UTC"));
         validator = mock(Validator.class);
-        matches = new ArrayList<>();
+        matches = new TreeSet<>();
         scoreboard = new Scoreboard(clock, validator, matches);
     }
 
@@ -37,22 +38,22 @@ class ScoreboardTest {
     void startMatch_ShouldAddMatchToList() {
         // Given
         doNothing().when(validator).validateTeams("Mexico", "Canada");
-        doNothing().when(validator).validateMatchNotStarted(anyList(), eq("Mexico"), eq("Canada"));
+        doNothing().when(validator).validateMatchNotStarted(any(SortedSet.class), eq("Mexico"), eq("Canada"));
 
         // When
         scoreboard.startMatch("Mexico", "Canada");
 
         // Then
         assertEquals(1, matches.size());
-        assertEquals("Mexico", matches.get(0).homeTeam());
-        assertEquals("Canada", matches.get(0).awayTeam());
+        assertEquals("Mexico", matches.first().homeTeam());
+        assertEquals("Canada", matches.first().awayTeam());
     }
 
     @Test
     void startMatch_ShouldThrowException_WhenTeamsAreSame() {
         // Given
         doThrow(new IllegalArgumentException()).when(validator).validateTeams("Mexico", "Mexico");
-        doNothing().when(validator).validateMatchNotStarted(anyList(), eq("Mexico"), eq("Mexico"));
+        doNothing().when(validator).validateMatchNotStarted(any(SortedSet.class), eq("Mexico"), eq("Mexico"));
 
         // When & Then
         assertThrows(IllegalArgumentException.class, () -> scoreboard.startMatch("Mexico", "Mexico"));
@@ -62,7 +63,7 @@ class ScoreboardTest {
     void startMatch_ShouldThrowException_WhenMatchAlreadyStarted() {
         // Given
         doNothing().when(validator).validateTeams("Mexico", "Canada");
-        doThrow(new IllegalArgumentException()).when(validator).validateMatchNotStarted(anyList(), eq("Mexico"), eq("Canada"));
+        doThrow(new IllegalArgumentException()).when(validator).validateMatchNotStarted(any(SortedSet.class), eq("Mexico"), eq("Canada"));
 
         // When
         assertThrows(IllegalArgumentException.class, () -> scoreboard.startMatch("Mexico", "Canada"));
@@ -83,8 +84,8 @@ class ScoreboardTest {
         // Then
         assertDoesNotThrow(() -> scoreboard.updateScore("Mexico", "Canada", 1, 2));
         assertEquals(1, matches.size());
-        assertEquals(1, matches.get(0).homeScore());
-        assertEquals(2, matches.get(0).awayScore());
+        assertEquals(1, matches.first().homeScore());
+        assertEquals(2, matches.first().awayScore());
     }
 
     @Test

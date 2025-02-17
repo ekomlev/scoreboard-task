@@ -5,21 +5,22 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ScoreboardFunctionalTest {
     private Scoreboard scoreboard;
-    private List<Match> matches;
+    private SortedSet<Match> matches;
 
     @BeforeEach
     void setUp() {
         Validator validator = new Validator();
         Clock clock = Clock.systemDefaultZone();
-        matches = new ArrayList<>();
+        matches = new TreeSet<>();
         scoreboard = new Scoreboard(clock, validator, matches);
     }
 
@@ -29,8 +30,8 @@ class ScoreboardFunctionalTest {
         scoreboard.updateScore("Spain", "Brazil", 10, 2);
 
         assertEquals(1, matches.size());
-        assertEquals(10, matches.get(0).homeScore());
-        assertEquals(2, matches.get(0).awayScore());
+        assertEquals(10, matches.first().homeScore());
+        assertEquals(2, matches.first().awayScore());
     }
 
     @Test

@@ -2,7 +2,7 @@ package com.sportradar.dto;
 
 import java.time.Instant;
 
-public record Match(String homeTeam, String awayTeam, int homeScore, int awayScore, Instant startTime) {
+public record Match(String homeTeam, String awayTeam, int homeScore, int awayScore, Instant startTime) implements Comparable<Match> {
 
     /**
      * Updates the score of the match
@@ -33,6 +33,15 @@ public record Match(String homeTeam, String awayTeam, int homeScore, int awaySco
      */
     public int totalScore() {
         return homeScore + awayScore;
+    }
+
+    @Override
+    public int compareTo(Match other) {
+        int scoreComparison = Integer.compare(other.totalScore(), this.totalScore());
+        if (scoreComparison != 0) {
+            return scoreComparison;
+        }
+        return other.startTime().compareTo(this.startTime());
     }
 
     @Override

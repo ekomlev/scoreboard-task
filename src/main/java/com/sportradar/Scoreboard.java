@@ -4,21 +4,21 @@ import com.sportradar.dto.Match;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.Clock;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 @Slf4j
 public class Scoreboard {
     private final Validator validator;
     private final Clock clock;
-    private final List<Match> matches;
+    private final SortedSet<Match> matches;
 
-    public Scoreboard(Clock clock, Validator validator, List<Match> matches) {
+    public Scoreboard(Clock clock, Validator validator, SortedSet<Match> matches) {
         this.clock = clock;
         this.validator = validator;
-        this.matches = Objects.requireNonNullElseGet(matches, ArrayList::new);
+        this.matches = Objects.requireNonNullElseGet(matches, TreeSet::new);
     }
 
     /**
@@ -72,8 +72,6 @@ public class Scoreboard {
      */
     public List<String> getSummary() {
         return matches.stream()
-                .sorted(Comparator.comparingInt(Match::totalScore).reversed()
-                        .thenComparing(Comparator.comparing(Match::startTime).reversed()))
                 .map(Match::toString)
                 .toList();
     }

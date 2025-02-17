@@ -2,7 +2,7 @@ package com.sportradar;
 
 import com.sportradar.dto.Match;
 
-import java.util.List;
+import java.util.SortedSet;
 
 public class Validator {
 
@@ -13,7 +13,7 @@ public class Validator {
      * @param homeTeam home team name
      * @param awayTeam away team name
      */
-    protected void validateMatchNotStarted(List<Match> matches, String homeTeam, String awayTeam) {
+    protected void validateMatchNotStarted(SortedSet<Match> matches, String homeTeam, String awayTeam) {
         if (isMatchStarted(matches, homeTeam, awayTeam)) {
             throw new IllegalArgumentException("Match has already started");
         }
@@ -50,18 +50,18 @@ public class Validator {
      * @param homeTeam home team name
      * @param awayTeam away team name
      */
-    public void validateMatchExists(List<Match> matches, String homeTeam, String awayTeam) {
+    public void validateMatchExists(SortedSet<Match> matches, String homeTeam, String awayTeam) {
         if (isMatchNotFound(matches, homeTeam, awayTeam)) {
             throw new IllegalArgumentException("Match not found");
         }
     }
 
-    private boolean isMatchStarted(List<Match> matches, String homeTeam, String awayTeam) {
+    private boolean isMatchStarted(SortedSet<Match> matches, String homeTeam, String awayTeam) {
         return matches.stream()
                 .anyMatch(match -> match.homeTeam().equals(homeTeam) && match.awayTeam().equals(awayTeam));
     }
 
-    private boolean isMatchNotFound(List<Match> matches, String homeTeam, String awayTeam) {
+    private boolean isMatchNotFound(SortedSet<Match> matches, String homeTeam, String awayTeam) {
         return matches.stream()
                 .noneMatch(m -> m.isMatch(homeTeam, awayTeam));
     }
